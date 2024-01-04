@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>论坛分享网站</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+<body>
+  <div class="container">
+    <a href="dashbord.html" class="jump-button" id="myButton">生成可视化数据报告</a>
+  <div id="post-container">
+    <div id="post-form">
+      <h2>发表新帖</h2>
+      <form id="new-post-form">
+        <label for="postTitle">标题：</label>
+        <input type="text" id="postTitle" name="postTitle" required>
+        
+        <label for="postContent">内容：</label>
+        <textarea id="postContent" name="postContent" required></textarea>
+        
+        <button type="button" onclick="submitPostForm()">发布帖子</button>
+      </form>
+    </div>
+
+    <div id="posts-list"></div>
+  </div>
+
+  <script src="main.js"></script>
+</body>
+</html>

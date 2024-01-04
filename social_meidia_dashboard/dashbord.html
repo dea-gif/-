@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>社交媒体分析报告</title>
+  <!-- 引入Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+  <div class="container mt-4">
+    <h1>社交媒体数据分析</h1>
+    <div class="row">
+      <div class="col-md-6">
+        <!-- 饼图部分 -->
+        <h2>饼图 - 帖子互动比例</h2>
+        <form id="postForm">
+          <div class="form-group">
+            <label for="postId">帖子ID：</label>
+            <input type="number" id="postId" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary">获取帖子数据</button>
+        </form>
+        <div class="form-group mt-3">
+          <label for="likes">喜欢数量：</label>
+          <input type="number" id="likes" class="form-control" readonly>
+          <label for="dislikes">不喜欢数量：</label>
+          <input type="number" id="dislikes" class="form-control" readonly>
+          <label for="comments">评论数量：</label>
+          <input type="number" id="comments" class="form-control" readonly>
+        </div>
+        <canvas id="pieChart" width="400" height="200"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- 引入Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // 获取特定帖子的数据
+    function getPostData(postId) {
+      fetch(`get_post_data.php?postId=${postId}`)
+        .then(response => response.json())
+        .then(data => {
+          // 在这里使用数据更新饼状图
+          updatePieChart(data.likes, data.dislikes, data.comments);
+
+          // 将数据填充到输入框
+          document.getElementById('likes').value = data.likes;
+          document.getElementById('dislikes').value = data.dislikes;
+          document.getElementById('comments').value = data.comments;
+        })
+        .catch(error => console.error('获取帖子数据失败：', error));
+    }
+
+   // 更新饼状图
+function updatePieChart(likes, dislikes, comments) {
+  const pieCtx = document.getElementById('pieChart').getContext('2d');
+
+  // 获取现有的图表实例
+  const existingChart = Chart.getChart(pieCtx);
+
+  // 检查是否存在现有的图表实例，如果存在则销毁
+  if (existingChart) {
+    existingChart.destroy();
+  }
+
+  const pieChart = new Chart(pieCtx, {
+    type: 'pie',
+    data: {
+      labels: ['喜欢', '不喜欢', '评论'],
+      datasets: [{
+        label: '帖子互动量',
+        data: [likes, dislikes, comments],
+        backgroundColor: ['rgba(255, 99, 132, 0.2)', 'rgba(54, 162, 235, 0.2)', 'rgba(255, 206, 86, 0.2)'],
+        borderColor: ['rgba(255, 99, 132, 1)', 'rgba(54, 162, 235, 1)', 'rgba(255, 206, 86, 1)'],
+        borderWidth: 1
+      }]
+    }
+  });
+}
+
+// 处理表单提交事件
+document.getElementById('postForm').addEventListener('submit', function (event) {
+  event.preventDefault(); // 阻止表单默认提交行为
+  const postId = document.getElementById('postId').value;
+  getPostData(postId);
+});
+
+// 初始化页面时加载初始帖子数据
+const initialPostId = 1; // 初始帖子的 ID
+getPostData(initialPostId);
+
+  </script>
+</body>
+
+</html>
